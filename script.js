@@ -83,10 +83,8 @@ function updateData(){
 function updateStudentList(){
     //loop through each student in the studentarray, and call addStudentToDom for EACH student in the array
     for(var i=0; i<studentArray.length; i++){
-       var updateStudent = studentArray[i].name; // create var and sets to arrays name index
-       var updateCourse =  studentArray[i].course;//create var and sets to arrays course index
-        var updateGrade = studentArray[i].grade;// create var and sets to arrays grade index
-        addStudentToDom(updateStudent, updateCourse, updateGrade);//variables set in to call ASD
+       var updateStudent = studentArray[i]; // create var and sets to arrays name index
+        addStudentToDom(updateStudent);//variables set in to call ASD
     }
     //make a for loop to go through the studentarray
     //for each object in the student array, call addStudentToDom
