@@ -86,8 +86,8 @@ function updateStudentList(){
        var updateStudent = studentArray[i].name; // create var and sets to arrays name index
        var updateCourse =  studentArray[i].course;//create var and sets to arrays course index
         var updateGrade = studentArray[i].grade;// create var and sets to arrays grade index
+        addStudentToDom(updateStudent, updateCourse, updateGrade);//variables set in to call ASD
     }
-    addStudentToDom(updateStudent, updateCourse, updateGrade);//variables set in to call ASD
     //make a for loop to go through the studentarray
     //for each object in the student array, call addStudentToDom
 }
@@ -123,6 +123,7 @@ function addStudentToDom(student){
     var button = $('<button>').addClass('btn btn-danger').text('Delete').click();
     $(tr).append(td1, td2, td3, button);
     $('.student-list tbody').append(tr);
+    console.log(student);
 
 }
 
