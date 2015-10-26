@@ -14,7 +14,7 @@
 
 
    var stuName = $("#studentName");
-   var stuCourse = $("#course");
+   var stuCourse = $("#studentCourse");
    var stuGrade = $("#studentGrade");
 
 
@@ -23,8 +23,9 @@
  */
 function addClicked(){
     addStudent();
-    //clearStudentList();
+    clearStudentList();
     updateStudentList();
+
     //calculateAverage();
 
 }
@@ -46,8 +47,9 @@ function addStudent(){
 
         name: $("#studentName").val(),
         course: $("#studentCourse").val(),
-        grade: $("#studentGrade").val()
-
+        grade: $("#studentGrade").val(),
+        delete: function () {
+        }
     };
     studentArray.push(student);
 }
@@ -58,7 +60,7 @@ function addStudent(){
 function clearAddStudentForm(){
     // targets input ID's and clears field
     $("#studentName").val('');
-    $("#studetnCourse").val('');
+    $("#studentCourse").val('');
     $("#studentGrade").val('');
 }
 
@@ -67,6 +69,13 @@ function clearAddStudentForm(){
  * @returns {number}
  */
 function calculateAverage(){
+    var sum = 0; //total of the loop
+    //go through loop
+    for( i=0; i<studentArray.length; i++){
+    //adding sum to with each loop
+        sum += parseInt(studentArray[i].grade);
+    }
+
     console.log('calling calculate average function');
 
 }
@@ -103,7 +112,8 @@ function clearStudentList(){
  * into the .student_list tbody
  *
  */
-function addStudentToDom(student){
+function addStudentToDom(student, index){
+    console.log("this is the student at the beginning of addStudentToDom" ,student);
     //make td for student course and put student course into its text
     //make td for student grade and put student grade into its text
     //make delete button and put delete text into it
@@ -117,11 +127,23 @@ function addStudentToDom(student){
     var td1 = $('<td>').text(student.name);
     var td2 = $('<td>').text(student.course);
     var td3 = $('<td>').text(student.grade);
-    var tr = $('<tr>');
-    var button = $('<button>').addClass('btn btn-danger').text('Delete').click();
-    $(tr).append(td1, td2, td3, button);
+    var td4 = $('<td>');
+
+    var button = $('<button>').addClass('btn btn-danger').text('Delete').attr('type', 'button').attr('student_index', index);
+
+    td4.append(button);
+    var tr = $('<tr>').append(button);
+    $(tr).append(td1, td2, td3, td4);
+    console.log('student-list tbody',$('tbody'));
     $('.student-list tbody').append(tr);
     console.log(student);
+
+    button.click(function(){
+        console.log('delete button clicked');
+        console.log('student_index = ',$(this).attr('student_index'));
+        button.remove(index);
+    });
+
 
 }
 
