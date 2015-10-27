@@ -2,17 +2,18 @@
  * Define all global variables here
  */
 /**
- * student_array - global array to hold student objects
+ *
  * @type {Array}
- */var studentArray = [];
+ */var studentArray = [];//student_array - global array to hold student objects
+console.log(studentArray);
 
 /**
- * inputIds - id's of the elements that are used to add students
+ * inputIds -
  * @type {string[]}
  */
 
 
-
+    //id's of the elements that are used to add students
    var stuName = $("#studentName");
    var stuCourse = $("#studentCourse");
    var stuGrade = $("#studentGrade");
@@ -21,12 +22,10 @@
 /**
  * addClicked - Event Handler when user clicks the add button
  */
-function addClicked(){
-    addStudent();
-    clearStudentList();
-    updateStudentList();
-
-    //calculateAverage();
+function addClicked(){//function is called inside add button with "onclick"
+    addStudent();//create obj and sets key values to input IDs value field
+    clearStudentList();//clears value from IDs input field
+    updateStudentList();//loops through global student array and appends each objects data into the student-list-container > list-body
 
 }
 /**
@@ -45,13 +44,16 @@ function addStudent(){
     //creates object and sets key values to input ID's value field
     var student = {
 
-        name: $("#studentName").val(),
-        course: $("#studentCourse").val(),
-        grade: $("#studentGrade").val(),
-        delete: function () {
+        name: $("#studentName").val(),// name:, course:, grade are my keys
+        course: $("#studentCourse").val(),//Jquery selector targets the ID's inside input
+        grade: $("#studentGrade").val(),// .val() method grabs info inside value field inside input
+        delete: function () { // setting function for delete button inside my <td>
+            console.log()
         }
     };
-    studentArray.push(student);
+    studentArray.push(student);//pushing student obj into global array, giving me access globally to student obj
+    updateStudentList();
+    calculateAverage();
 }
 
 /**
@@ -59,7 +61,7 @@ function addStudent(){
  */
 function clearAddStudentForm(){
     // targets input ID's and clears field
-    $("#studentName").val('');
+    $("#studentName").val('');//targeting the value inside input field and resetting with open string ''
     $("#studentCourse").val('');
     $("#studentGrade").val('');
 }
@@ -70,13 +72,15 @@ function clearAddStudentForm(){
  */
 function calculateAverage(){
     var sum = 0; //total of the loop
-    //go through loop
-    for( i=0; i<studentArray.length; i++){
-    //adding sum to with each loop
-        sum += parseInt(studentArray[i].grade);
+
+    for( i=0; i<studentArray.length; i++){//go through loop
+
+        sum += parseInt(studentArray[i].grade);//adding sum to with each loop
     }
 
-    console.log('calling calculate average function');
+    console.log('calling calculate average function',sum);
+    var average = sum / studentArray.length;//var takes overall sum and divides by the length of the array(or students inside)
+    $('.avgGrade').text(average.toFixed(2));//targets span in dom sets text to show average .toFixed method rounds up 2 decimals
 
 }
 
@@ -84,26 +88,29 @@ function calculateAverage(){
  * updateData - centralized function to update the average and call student list update
  */
 function updateData(){
-    updateStudentList()
+    updateStudentList();
+    calculateAverage();
 }
 /**
  * updateStudentList - loops through global student array and appends each objects data into the student-list-container > list-body
  */
 function updateStudentList(){
+    $('.student-list tbody');
     //loop through each student in the studentarray, and call addStudentToDom for EACH student in the array
-    for(var i=0; i<studentArray.length; i++){
-       var updateStudent = studentArray[i]; // create var and sets to arrays name index
-        addStudentToDom(updateStudent);//variables set in to call ASD
+    for(var i=0; i<studentArray.length; i++){//loops through studentArray
+       var updateStudent = studentArray[i];//var for passing studentArray
+        addStudentToDom(updateStudent, i);//for each object in the student array, and index call to ATSD
+
+
     }
-    //make a for loop to go through the studentarray
-    //for each object in the student array, call addStudentToDom
+    console.log(updateStudent);
 }
 
 /**
- * clearStudentList - erases all of the dom elements from the student-list tbody
+ * clearStudentList -
  */
 function clearStudentList(){
-    $(".student_list tbody").html('');
+    $(".student-list tbody").html('');//erases all of the dom elements from the student-list tbody
 
 }
 
@@ -112,8 +119,8 @@ function clearStudentList(){
  * into the .student_list tbody
  *
  */
-function addStudentToDom(student, index){
-    console.log("this is the student at the beginning of addStudentToDom" ,student);
+function addStudentToDom(student, index){//passing in student obj and index
+    console.log("this is the student at the beginning of addStudentToDom");
     //make td for student course and put student course into its text
     //make td for student grade and put student grade into its text
     //make delete button and put delete text into it
@@ -123,7 +130,6 @@ function addStudentToDom(student, index){
     //adds one student to the student-list tbody
     //make tr
     //make td for student name and put student name into its text
-    // 'studentName': $("#studentName").val();
     var td1 = $('<td>').text(student.name);
     var td2 = $('<td>').text(student.course);
     var td3 = $('<td>').text(student.grade);
@@ -132,26 +138,31 @@ function addStudentToDom(student, index){
     var button = $('<button>').addClass('btn btn-danger').text('Delete').attr('type', 'button').attr('student_index', index);
 
     td4.append(button);
-    var tr = $('<tr>').append(button);
+    var tr = $('<tr>');
     $(tr).append(td1, td2, td3, td4);
-    console.log('student-list tbody',$('tbody'));
     $('.student-list tbody').append(tr);
     console.log(student);
 
     button.click(function(){
-        console.log('delete button clicked');
-        console.log('student_index = ',$(this).attr('student_index'));
-        button.remove(index);
+        console.log('delete button clicked', $(this).parent().parent());
+       /* console.log('student_index = ',$(this).attr('student_index', index));
+        button.remove('index: ', index);*/
+        $(this).parents('tr').remove();
     });
 
 
 }
 
 /**
- * reset - resets the application to initial state. Global variables reset, DOM get reset to initial load state
+ * reset -
  */
-
+function reset (){//resets the application to initial state. Global variables reset, DOM get reset to initial load state
+    studentArray = [];
+}
 
 /**
- * Listen for the document to load and reset the data to the initial state
+ *
  */
+$(document).ready(function(){//Listen for the document to load and reset the data to the initial state
+    reset();
+});
