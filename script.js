@@ -152,18 +152,41 @@ function addStudentToDom(student){//passing in student obj and index
     });
 
 
+
 }
 
-/**
- * reset -
- */
+
+
+
 function reset (){//resets the application to initial state. Global variables reset, DOM get reset to initial load state
     studentArray = [];
     cancelClicked()}
+
+
 
 /**
  *
  */
 $(document).ready(function(){//Listen for the document to load and reset the data to the initial state
     reset();
+
+$(".server-data").on("click" , function(){
+    $.ajax({
+        dataType: "json",
+        data: {api_key: "RoRFiNXGQj"},
+        method: "POST",
+        url: 'http://s-apis.learningfuze.com/sgt/get',
+        success: function(response){
+            console.log("Success: ", response);
+            for(i=0; i<response.data.length; i++){
+                data = response.data[i];
+                console.log(data);
+            }
+
+
+        }
+    })
 });
+
+
+ });
