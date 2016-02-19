@@ -1,56 +1,40 @@
- /**
- * Define all global variables here
- */
-/**
- *
- * @type {Array}
- */
+//OOP refactor created on 2/12/16
+
+//base object constructor
 
 
+$(document).ready(function () {
+    console.log('Page Load?');
+    //var school = new SchoolTemplate();
 
-/**
- * inputIds -
- * @type {string[]}
- */
+});
 
-
-/**
- * addClicked - Event Handler when user clicks the add button
- *
- */
-
-
-/**
- * cancelClicked - Event Handler when user clicks the cancel button, should clear out student form
- */
-
-/**
- * addStudent - creates a student objects based on input fields in the form and adds the object to global student array
- *
- *
- * @return undefined
- */
-
-/**
- * calculateAverage - loop through the global student array and calculate average grade and return that value
- * @returns {number}
- */
-/**
- * updateData - centralized function to update the average and call student list update
- */
-
-/**
- * updateStudentList - loops through global student array and appends each objects data into the student-list-container > list-body
- */
+var SchoolTemplate = function () {
+    var self = this;
+    self.studentArray = [];
+    self.addStudent = function(){
+        var name = $('#studentName').val();
+        var course = $('#studentCourse').val();
+        var grade = $('#studentGrade').val();
+        var student = new StudentTemplate();
+        student.assign(name, course, grade);
+        this.studentArray.push(student);
+        console.log(this.studentArray);
+    }
 
 
-/**
- * clearStudentList -
- */
+};
 
+var StudentTemplate = function(){
+    var self = this;
+    var name = self.name;
+    var course = self.course;
+    var grade =  self.grade;
+    self.assign = function(name, course, grade){
+        this.name = name;
+        this.course = course;
+        this.grade = grade;
 
-/**
- * addStudentToDom - take in a student object, create html elements from the values and then append the elements
- * into the .student_list tbody
- *
- */
+    }
+};
+var school = new SchoolTemplate();
