@@ -19,7 +19,7 @@ var SchoolTemplate = function () {
         var student = new StudentTemplate();
         student.assign(name, course, grade);
         this.studentArray.push(student);
-        console.log(this.studentArray);
+        console.log('current status of student array:', this.studentArray);
     }
 
 
