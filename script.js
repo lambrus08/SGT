@@ -12,75 +12,104 @@ $(document).ready(function () {
 var SchoolTemplate = function () {
     var self = this;
     self.studentArray = [];
-    self.addStudent = function(){
+    self.addStudent = function () {
         var name = $('#studentName').val();
         var course = $('#studentCourse').val();
         var grade = $('#studentGrade').val();
-        var student = new StudentTemplate();
-        student.assign(name, course, grade);
-        this.studentArray.push(student);
-        self.calculateAverage();
-        self.addStudentToDom(student);
-        self.clearValuesFromForm();
-        console.log('current status of student array:', this.studentArray);
+        if (typeof name && course && grade !== 'string') {
+            var student = new StudentTemplate(school);
+            student.assignStudentInfoToSchoolObj(name, course, grade);
+            self.addStudentToDom(student);
+            this.studentArray.push(student);
+            self.calculateAverage();
+            self.cancelClicked();
+            console.log('current status of student array:', this.studentArray);
+        }
+        else {
+            console.log('exit');
+            return;
+        }
+
     };
-    self.calculateAverage = function(){
+    self.calculateAverage = function () {
         var sum = 0;
-        for(i = 0; i < this.studentArray.length; i++){
+        for (i = 0; i < this.studentArray.length; i++) {
             sum += parseInt(this.studentArray[i]['grade']);
             console.log('sum of all grades =', sum);
         }
-        var average = sum/this.studentArray.length;
-        console.log('This is my average:', average);
-        $('.avgGrade').text(average.toFixed(2));
-        return average;
+        if(sum > 0) {
+            var average = sum / this.studentArray.length;
+            console.log('This is my average:', average);
+            $('.avgGrade').text(average.toFixed(2));
 
+            return average;
+        }
+        else{
+            $('.avgGrade').text('0');
+        }
     };
 
-    self.addStudentToDom = function(student) {
-        console.log('add student to dom check: ', student.name);
-        var td1 = $('<td>').text(student.name);
-        var td2 = $('<td>').text(student.course);
-        var td3 = $('<td>').text(student.grade);
+    self.addStudentToDom = function (student) {
+        var element = student.createStudentDomElements();
+        $('tbody').append(element);
+    };
+
+    self.cancelClicked = function () {
+        $('#studentName').val('');
+        $('#studentCourse').val('');
+        $('#studentGrade').val('');
+
+    };
+    self.removeStudentFromArray = function (student) {
+        for (var i = 0; i < this.studentArray.length; i++) {
+            if (student === this.studentArray[i]) {
+                this.studentArray.splice(i, 1);
+            }
+        }
+
+    }
+
+};
+
+
+var StudentTemplate = function (parent) {
+    var self = this;
+    this.parent = parent;
+    console.log('this.parent', this.parent);
+    this.name = null;
+    this.course = null;
+    this.grade = null;
+    this.studentTableRow = null;
+    self.assignStudentInfoToSchoolObj = function (name, course, grade) {
+        this.name = name;
+        this.course = course;
+        this.grade = grade;
+    };
+    self.createStudentDomElements = function () {
+        console.log('add student to dom check: ', this.name);
+        var td1 = $('<td>').text(this.name);
+        var td2 = $('<td>').text(this.course);
+        var td3 = $('<td>').text(this.grade);
         var td4 = $('<td>');
         var button = $('<button>').addClass('btn btn-danger').text('Delete').attr('type', 'button');
         var tr = $('<tr>');
         td4.append(button);
-        $('tbody').append(tr);
         $(tr).append(td1, td2, td3, td4);
-        button.click(function(){
-            var element = this;
-            $(element).empty();
-            console.log('delete button clicked');
+        this.studentTableRow = tr;
+        button.click(function () {
+            self.removeSelf();
+            console.log('current student array after delete is pressed', parent.studentArray);
+        });
 
-        })
+
+        return tr;
     };
-    self.clearValuesFromForm = function(){
-        $('#studentName').val('');
-        $('#studentCourse').val('');
-        $('#studentGrade').val('');
+
+    self.removeSelf = function () {
+        console.log('this is inside remove self method', this);
+        this.studentTableRow.remove();
+        this.parent.removeStudentFromArray(this);
+        this.parent.calculateAverage();
     };
-    self.cancelClicked = function(){
-        self.clearValuesFromForm();
-        this.studentArray = [];
-        $('tbody').empty();
-        $('.avgGrade').text('0');
-
-    }
-};
-
-
-
-var StudentTemplate = function(){
-    var self = this;
-    var name = self.name;
-    var course = self.course;
-    var grade =  self.grade;
-    self.assign = function(name, course, grade){
-        this.name = name;
-        this.course = course;
-        this.grade = grade;
-
-    }
 };
 var school = new SchoolTemplate();
