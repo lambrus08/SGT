@@ -3,11 +3,33 @@
 //base object constructor
 
 
-$(document).ready(function () {
+$(document).ready(function(){
     console.log('Page Load?');
-    //var school = new SchoolTemplate();
 
 });
+    $('#getDataBaseInfo').on('click',function(){
+        console.log('was button pressed');
+        $.ajax({
+            dataType: 'json',
+            data: {api_key: 'RoRFiNXGQj'},
+            method: 'POST',
+            url: 'http://s-apis.learningfuze.com/sgt/get',
+            success: function (response) {
+                console.log('AJAX was called, was it successful?: ', response);
+                console.log('response.data: ', response.data);
+                console.log('response.data[12]: ', response.data[12]);
+                for (i = 0; i < response.data.length; i++) {
+                    console.log('response.data[i]: ', response.data[i]);
+                    var studentDataBase = response.data[i];
+                    console.log('dataBaseInfo: ', studentDataBase);
+                    school.addStudentFromDataBase(studentDataBase);
+                }
+            }
+        })
+    });
+
+
+
 
 var SchoolTemplate = function () {
     var self = this;
@@ -17,10 +39,10 @@ var SchoolTemplate = function () {
         var course = $('#studentCourse').val();
         var grade = $('#studentGrade').val();
         if (typeof name && course && grade !== 'string') {
-            var student = new StudentTemplate(school);
-            student.assignStudentInfoToSchoolObj(name, course, grade);
-            self.addStudentToDom(student);
-            this.studentArray.push(student);
+            var Student = new StudentTemplate(this);
+            Student.assignStudentInfoToSelf(name, course, grade);
+            self.addStudentToDom(Student);
+            this.studentArray.push(Student);
             self.calculateAverage();
             self.cancelClicked();
             console.log('current status of student array:', this.studentArray);
@@ -37,14 +59,14 @@ var SchoolTemplate = function () {
             sum += parseInt(this.studentArray[i]['grade']);
             console.log('sum of all grades =', sum);
         }
-        if(sum > 0) {
+        if (sum > 0) {
             var average = sum / this.studentArray.length;
             console.log('This is my average:', average);
             $('.avgGrade').text(average.toFixed(2));
 
             return average;
         }
-        else{
+        else {
             $('.avgGrade').text('0');
         }
     };
@@ -53,6 +75,7 @@ var SchoolTemplate = function () {
         var element = student.createStudentDomElements();
         $('tbody').append(element);
     };
+
 
     self.cancelClicked = function () {
         $('#studentName').val('');
@@ -67,6 +90,17 @@ var SchoolTemplate = function () {
             }
         }
 
+    };
+    self.addStudentFromDataBase = function (data) {
+        console.log('data: ', data['name']);
+        var name = data['name'];
+        var course = data['course'];
+        var grade = data['grade'];
+        var dataBaseStudent = new StudentTemplate(this);
+        dataBaseStudent.assignStudentInfoToSelf(name, course, grade);
+        self.calculateAverage();
+        self.addStudentToDom(dataBaseStudent);
+        this.studentArray.push(dataBaseStudent);
     }
 
 };
@@ -80,7 +114,7 @@ var StudentTemplate = function (parent) {
     this.course = null;
     this.grade = null;
     this.studentTableRow = null;
-    self.assignStudentInfoToSchoolObj = function (name, course, grade) {
+    self.assignStudentInfoToSelf = function (name, course, grade) {
         this.name = name;
         this.course = course;
         this.grade = grade;
@@ -113,3 +147,4 @@ var StudentTemplate = function (parent) {
     };
 };
 var school = new SchoolTemplate();
+
