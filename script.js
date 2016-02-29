@@ -3,11 +3,9 @@
 //base object constructor
 
 
-$(document).ready(function(){
+$(document).ready(function () {
     console.log('Page Load?');
-
-});
-    $('#getDataBaseInfo').on('click',function(){
+    $('#getDataBaseInfo').on('click', function () {
         console.log('was button pressed');
         $.ajax({
             dataType: 'json',
@@ -25,10 +23,9 @@ $(document).ready(function(){
                     school.addStudentFromDataBase(studentDataBase);
                 }
             }
-        })
+        });
     });
-
-
+});
 
 
 var SchoolTemplate = function () {
@@ -38,11 +35,31 @@ var SchoolTemplate = function () {
         var name = $('#studentName').val();
         var course = $('#studentCourse').val();
         var grade = $('#studentGrade').val();
-        if (typeof name && course && grade !== 'string') {
+        var id = null;
+        if (typeof name && course && grade && id !== 'string') {
+            $.ajax({
+                dataType: 'json',
+                method: 'POST',
+                url: 'http://s-apis.learningfuze.com/sgt/create',
+                data: {api_key: 'RoRFiNXGQj',
+                    name: name,
+                    course: course,
+                    grade: grade,
+                    new_id: 'value'},
+                success: function (response) {
+                    console.log('Successful response: ',response, response.new_id);
+                    id = response.new_id;
+                    Student.assignStudentInfoToSelf(name, course, grade, id);
+                    console.log('this is id: ', id);
+                },
+                error: function (response) {
+                    console.log('Error, your response was not successful')
+                }
+            });
             var Student = new StudentTemplate(this);
-            Student.assignStudentInfoToSelf(name, course, grade);
+            Student.assignStudentInfoToSelf(name, course, grade, id);
             self.addStudentToDom(Student);
-            this.studentArray.push(Student);
+            self.studentArray.push(Student);
             self.calculateAverage();
             self.cancelClicked();
             console.log('current status of student array:', this.studentArray);
@@ -92,16 +109,18 @@ var SchoolTemplate = function () {
 
     };
     self.addStudentFromDataBase = function (data) {
-        console.log('data: ', data['name']);
+        console.log('data: ', data['id']);
         var name = data['name'];
         var course = data['course'];
         var grade = data['grade'];
+        var id = data['id'];
         var dataBaseStudent = new StudentTemplate(this);
-        dataBaseStudent.assignStudentInfoToSelf(name, course, grade);
+        dataBaseStudent.assignStudentInfoToSelf(name, course, grade, id);
         self.calculateAverage();
         self.addStudentToDom(dataBaseStudent);
         this.studentArray.push(dataBaseStudent);
-    }
+    };
+
 
 };
 
@@ -113,11 +132,13 @@ var StudentTemplate = function (parent) {
     this.name = null;
     this.course = null;
     this.grade = null;
+    this.id = null;
     this.studentTableRow = null;
-    self.assignStudentInfoToSelf = function (name, course, grade) {
+    self.assignStudentInfoToSelf = function (name, course, grade, id) {
         this.name = name;
         this.course = course;
         this.grade = grade;
+        this.id = id;
     };
     self.createStudentDomElements = function () {
         console.log('add student to dom check: ', this.name);
@@ -140,6 +161,19 @@ var StudentTemplate = function (parent) {
     };
 
     self.removeSelf = function () {
+        $.ajax({
+            dataType: 'json',
+            method: 'POST',
+            url: 'http://s-apis.learningfuze.com/sgt/delete',
+            data: {api_key: 'RoRFiNXGQj',
+            student_id: this.id},
+            success: function(response){
+                console.log('Your response was successful: ', response)
+            },
+            error: function(){
+                console.log('Your response failed');
+            }
+        });
         console.log('this is inside remove self method', this);
         this.studentTableRow.remove();
         this.parent.removeStudentFromArray(this);
