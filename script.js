@@ -14,9 +14,7 @@ $(document).ready(function () {
         left: '50%',
         transform: 'translate(-50%, -50%)'
     });
-
-    $('#getDataBaseInfo').on('click', function () {//event to grab data from server data base
-        console.log('was button pressed');
+    $('#getDataBaseInfo').on('click',function(){
         $.ajax({
             dataType: 'json',
             data: {api_key: 'RoRFiNXGQj'},
@@ -32,7 +30,9 @@ $(document).ready(function () {
                         var studentDataBase = response.data[i];
                         console.log('dataBaseInfo: ', studentDataBase);
                         school.addStudentFromDataBase(studentDataBase);
+                        school.calculateAverage();
                     }
+                    school.calculateAverage();
                     var lowestStudents = school.findLowestGrade();
                     var highestStudents = school.findHighestGrade();
                     for(var index in highestStudents){
@@ -42,11 +42,9 @@ $(document).ready(function () {
                     for(var index in lowestStudents){
                         lowestStudents[index].highLight('danger')
                     }
-                    console.log(lowestStudents);
-                    school.calculateAverage();//functions to get averages high and low
-                    //important to do it here so we don't repeat same functions in
-                    //different parts of my code.
+
                 }
+
                 else {
                     school.ajaxErrorHandling(response);//error handler, pops up modal if needed
                 }
@@ -58,7 +56,6 @@ $(document).ready(function () {
             }
         });
     });
-
 });
 $(document).ajaxStart(function () {//function to start loading screen every time an
     $('#ajaxLoader').show();//ajax call is made
@@ -160,11 +157,11 @@ SchoolTemplate = function () {//parent school template
         var course = data['course'];
         var grade = data['grade'];
         var id = data['id'];//id is use to verify if student has been added to server data base
+
         var dataBaseStudent = new StudentTemplate(this);
         dataBaseStudent.assignStudentInfoToSelf(name, course, grade, id);
-        self.addStudentToDom(dataBaseStudent);
         self.studentArray.push(dataBaseStudent);
-
+        self.addStudentToDom(dataBaseStudent);
 
     };
 
@@ -205,7 +202,7 @@ SchoolTemplate = function () {//parent school template
         //gives me current status of all high grades.
     };
 
-    self.findLowestGrade = function (Student) {
+    self.findLowestGrade = function () {
         var lowGrade = this.studentArray[0]['grade'];
         console.log('low grade: ', lowGrade);
         var lowGradeArr = [];
@@ -225,7 +222,6 @@ SchoolTemplate = function () {//parent school template
         }
         console.log('return of low grade array: ', lowGradeArr);
         return lowGradeArr;
-        //Student.highLight(lowGradeArr, 'danger');
     }
 
 };
