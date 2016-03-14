@@ -30,7 +30,6 @@ $(document).ready(function () {
                         var studentDataBase = response.data[i];
                         console.log('dataBaseInfo: ', studentDataBase);
                         school.addStudentFromDataBase(studentDataBase);
-                        school.calculateAverage();
                     }
                     school.calculateAverage();
                     var lowestStudents = school.findLowestGrade();
